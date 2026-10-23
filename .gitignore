@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+
+# Environment variables and secrets
+.env
+.env.*
+
+# Test and coverage artifacts
+.coverage
+htmlcov/
+
+# Operating system files
+.DS_Store
+Thumbs.db
