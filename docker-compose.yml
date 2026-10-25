@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: securedns-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: securedns
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d securedns"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  monitoring-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: securedns-monitoring-api
+    restart: unless-stopped
+    environment:
+      - SECUREDNS_DATABASE_URL=postgresql+asyncpg://postgres:postgrespassword@postgres:5432/securedns
+      - SECUREDNS_API_HOST=0.0.0.0
+      - SECUREDNS_API_PORT=8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: securedns-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - monitoring-api
+
+volumes:
+  postgres_data:

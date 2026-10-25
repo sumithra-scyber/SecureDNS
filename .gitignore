@@ -19,3 +19,14 @@ htmlcov/
 # Operating system files
 .DS_Store
 Thumbs.db
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Node / Frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
